@@ -1,65 +1,170 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import SearchBar from '@/components/SearchBar'
+import { TrendingUp, BookOpen, Calculator, ScrollText } from 'lucide-react'
+
+const POPULAR = [
+  { symbol: 'AAPL', name: 'Apple Inc.' },
+  { symbol: 'TSLA', name: 'Tesla, Inc.' },
+  { symbol: 'NVDA', name: 'NVIDIA Corp.' },
+  { symbol: 'SPY', name: 'S&P 500 ETF' },
+  { symbol: 'QQQ', name: 'Nasdaq-100 ETF' },
+  { symbol: 'MSFT', name: 'Microsoft Corp.' },
+  { symbol: 'AMZN', name: 'Amazon.com' },
+  { symbol: 'META', name: 'Meta Platforms' },
+  { symbol: 'GOOGL', name: 'Alphabet Inc.' },
+  { symbol: 'BTC-USD', name: 'Bitcoin' },
+  { symbol: 'SOXL', name: 'Semiconductor Bull 3X' },
+]
+
+export default function HomePage() {
+  const [recents, setRecents] = useState<string[]>([])
+  const [tab, setTab] = useState<'popular' | 'recent'>('popular')
+  const router = useRouter()
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('am_recent_tickers') || '[]') as string[]
+      setRecents(stored)
+      if (stored.length > 0) setTab('recent')
+    } catch {}
+  }, [])
+
+  const displayList = tab === 'recent'
+    ? recents.map(s => ({ symbol: s, name: '' }))
+    : POPULAR
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div style={{ minHeight: '100vh', background: 'var(--md-background)', display: 'flex', flexDirection: 'column' }}>
+      {/* Top App Bar */}
+      <header style={{
+        height: 64,
+        padding: '0 16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: 'var(--md-surface)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <TrendingUp size={24} color="var(--md-primary)" />
+          <span style={{ fontSize: 22, fontWeight: 500, color: 'var(--md-on-surface)', letterSpacing: 0 }}>
+            Adaptive Market
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={() => router.push('/reports')}
+            className="md-ripple"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '10px 16px', borderRadius: 20,
+              background: 'var(--md-surface-container)',
+              color: 'var(--md-on-surface-variant)',
+              border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500,
+            }}>
+            <BookOpen size={16} />
+            Reports
+          </button>
+          <button
+            onClick={() => router.push('/valuations')}
+            className="md-ripple"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '10px 16px', borderRadius: 20,
+              background: 'var(--md-surface-container)',
+              color: '#69F0AE',
+              border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500,
+            }}>
+            <Calculator size={16} />
+            Valuations
+          </button>
+          <button
+            onClick={() => router.push('/logs')}
+            className="md-ripple"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '10px 16px', borderRadius: 20,
+              background: 'var(--md-surface-container)',
+              color: 'var(--md-on-surface-variant)',
+              border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500,
+            }}>
+            <ScrollText size={16} />
+            Logs
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px 24px' }}>
+        <div style={{ width: '100%', maxWidth: 600 }}>
+          {/* Hero */}
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <h1 style={{ fontSize: 40, fontWeight: 400, color: 'var(--md-on-background)', letterSpacing: '-0.5px', marginBottom: 12, lineHeight: 1.2 }}>
+              Market Intelligence
+            </h1>
+            <p style={{ fontSize: 16, color: 'var(--md-on-surface-variant)', fontWeight: 400 }}>
+              Technical analysis and AI-powered research
+            </p>
+          </div>
+
+          {/* Search */}
+          <div style={{ marginBottom: 40 }}>
+            <SearchBar />
+          </div>
+
+          {/* Tab Row */}
+          {recents.length > 0 && (
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+              {(['popular', 'recent'] as const).map(t => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className="md-ripple"
+                  style={{
+                    padding: '6px 16px',
+                    borderRadius: 8,
+                    border: `1px solid ${tab === t ? 'var(--md-primary)' : 'var(--md-outline-variant)'}`,
+                    background: tab === t ? 'rgba(124,185,244,0.12)' : 'transparent',
+                    color: tab === t ? 'var(--md-primary)' : 'var(--md-on-surface-variant)',
+                    fontSize: 14, fontWeight: 500, cursor: 'pointer',
+                  }}>
+                  {t === 'popular' ? 'Popular' : 'Recent'}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Ticker Grid */}
+          <style>{`
+            .ticker-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            @media (min-width: 768px) { .ticker-grid { grid-template-columns: repeat(5, 1fr); } }
+          `}</style>
+          <div className="ticker-grid">
+            {displayList.map(({ symbol, name }) => (
+              <button
+                key={symbol}
+                onClick={() => router.push(`/ticker/${symbol}`)}
+                className="md-ripple"
+                style={{
+                  textAlign: 'left',
+                  padding: '16px',
+                  borderRadius: 16,
+                  background: 'var(--md-surface-container)',
+                  border: 'none', cursor: 'pointer',
+                }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--md-on-surface)', marginBottom: 4 }}>{symbol}</div>
+                {name && <div style={{ fontSize: 12, color: 'var(--md-on-surface-variant)', lineHeight: 1.3 }}>{name}</div>}
+              </button>
+            ))}
+          </div>
         </div>
       </main>
+
+      <footer style={{ padding: '16px 24px', textAlign: 'center', borderTop: '1px solid var(--md-outline-variant)' }}>
+        <p style={{ fontSize: 12, color: 'var(--md-outline)' }}>Data from Yahoo Finance · Not financial advice</p>
+      </footer>
     </div>
-  );
+  )
 }

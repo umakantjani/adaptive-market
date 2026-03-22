@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(npx prisma:*)",
+      "Bash(npm install:*)",
+      "Bash(export PATH=/opt/homebrew/bin:$PATH)",
+      "Bash(npm run:*)",
+      "Bash(node -e \"const {YahooFinance: YF} = require\\(''''yahoo-finance2''''\\); const yf = new YF\\(\\); yf.quoteSummary\\(''''AAPL'''', {modules: [''''financialData'''',''''defaultKeyStatistics'''',''''incomeStatementHistory'''',''''balanceSheetHistory'''',''''summaryProfile'''']}\\).then\\(d => { const j = JSON.stringify\\(d, null, 2\\); require\\(''''fs''''\\).writeFileSync\\(''''/tmp/aapl_fundamentals.json'''', j\\); console.log\\(''''done, size:'''', j.length\\) }\\).catch\\(e => console.error\\(e.message\\)\\)\")",
+      "Bash(find /Users/umakantjani/Developer/adaptive-market/node_modules/yahoo-finance2 -name fundamentals*)",
+      "Bash(mkdir -p /Users/umakantjani/Developer/adaptive-market/src/app/api/fundamentals/[symbol])",
+      "Bash(mkdir -p /Users/umakantjani/Developer/adaptive-market/src/app/api/valuations/[id])"
+    ]
+  }
+}
