@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import AIReport from '@/components/AIReport'
+import MobileNav from '@/components/MobileNav'
 import type { FullTickerData } from '@/types/market'
 
 export default function TickerReportPage() {
@@ -23,7 +24,8 @@ export default function TickerReportPage() {
   }, [symbol])
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--md-background)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--md-background)', paddingBottom: 80 }}
+      className="md:pb-0">
       {/* Top App Bar */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 30,
@@ -71,6 +73,7 @@ export default function TickerReportPage() {
           <AIReport ticker={data.ticker} ta={data.ta} />
         )}
       </main>
+      <MobileNav active="reports" symbol={symbol} />
     </div>
   )
 }

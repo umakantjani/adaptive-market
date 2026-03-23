@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, Bookmark, TrendingUp, TrendingDown, Sparkles, Calculator } from 'lucide-react'
+import { ArrowLeft, Bookmark, TrendingUp, TrendingDown, Sparkles, Calculator, Target } from 'lucide-react'
 import IndicatorGrid from '@/components/IndicatorGrid'
 import MobileNav from '@/components/MobileNav'
 import PriceChart from '@/components/charts/PriceChart'
@@ -13,7 +13,6 @@ import { formatNumber } from '@/lib/utils'
 import type { FullTickerData } from '@/types/market'
 
 type ChartTab = 'price' | 'rsimacd' | 'stochadx' | 'obv'
-type Section = 'charts' | 'indicators'
 
 const signalConfig: Record<string, { label: string; color: string; bg: string }> = {
   STRONG_BUY:  { label: 'Strong Buy',  color: '#00E676', bg: 'rgba(0,230,118,0.14)' },
@@ -38,7 +37,6 @@ export default function TickerPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [chartTab, setChartTab] = useState<ChartTab>('price')
-  const [section, setSection] = useState<Section>('charts')
 
   useEffect(() => {
     setLoading(true); setError(''); setData(null)
@@ -121,6 +119,17 @@ export default function TickerPage() {
             }}>
             <Calculator size={14} /> Valuation
           </button>
+          <button onClick={() => router.push(`/ticker/${symbol}/sniper`)} className="md-ripple"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '8px 14px', borderRadius: 20,
+              background: 'var(--md-surface-container)',
+              border: 'none', cursor: 'pointer',
+              fontSize: 13, fontWeight: 500,
+              color: '#FF6D00',
+            }}>
+            <Target size={14} /> Sniper
+          </button>
           <button onClick={() => router.push('/reports')} className="md-ripple"
             style={{ padding: 10, borderRadius: 50, background: 'transparent', border: 'none', cursor: 'pointer' }}>
             <Bookmark size={20} color="var(--md-on-surface-variant)" />
@@ -151,17 +160,13 @@ export default function TickerPage() {
             .ticker-layout { display: grid; gap: 16px; }
             @media (min-width: 1024px) { .ticker-layout { grid-template-columns: 1fr 380px; } }
             .left-col { display: flex; flex-direction: column; gap: 16px; }
-            .section-hidden { display: none; }
-            @media (min-width: 1024px) { .section-hidden { display: flex !important; flex-direction: column; } }
             .right-col { display: flex; flex-direction: column; gap: 16px; }
-            .right-hidden { display: none; }
-            @media (min-width: 1024px) { .right-hidden { display: block !important; } }
           `}</style>
 
           <div className="ticker-layout">
 
             {/* LEFT COLUMN */}
-            <div className={`left-col${section !== 'charts' ? ' section-hidden' : ''}`}>
+            <div className="left-col">
 
               {/* Price Card */}
               <div style={cardStyle}>
@@ -261,8 +266,7 @@ export default function TickerPage() {
             <div className="right-col">
 
               {/* Signal Score */}
-              <div className={section !== 'indicators' ? 'right-hidden' : ''}
-                style={cardStyle}>
+              <div style={cardStyle}>
                 <p style={{ fontSize: 13, color: 'var(--md-on-surface-variant)', marginBottom: 16 }}>Overall signal</p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
                   <div>
@@ -287,7 +291,7 @@ export default function TickerPage() {
               </div>
 
               {/* Indicators */}
-              <div className={section !== 'indicators' ? 'right-hidden' : ''}>
+              <div>
                 <p style={{ fontSize: 13, color: 'var(--md-on-surface-variant)', marginBottom: 12, paddingLeft: 4 }}>
                   Indicators — tap any to learn more
                 </p>
@@ -299,7 +303,7 @@ export default function TickerPage() {
         </main>
       )}
 
-      <MobileNav active={section} onChange={setSection} symbol={symbol} />
+      <MobileNav active="indicators" symbol={symbol} />
     </div>
   )
 }

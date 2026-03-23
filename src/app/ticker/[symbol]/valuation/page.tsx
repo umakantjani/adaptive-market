@@ -9,6 +9,7 @@ import {
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { buildDefaultInputs, calculateDCF } from '@/lib/dcf'
+import MobileNav from '@/components/MobileNav'
 import type { FundamentalData, DCFInputs, DCFResults } from '@/types/valuation'
 import type { TAResult, TickerInfo } from '@/types/market'
 import { formatNumber } from '@/lib/utils'
@@ -149,6 +150,7 @@ export default function ValuationPage() {
     setReport('')
     setGenError('')
     setSaved(false)
+    setSavedId(null)   // reset so Save button reappears after regeneration
     abortRef.current = new AbortController()
 
     const { history: _h, ...taWithoutHistory } = taData.ta
@@ -226,7 +228,8 @@ export default function ValuationPage() {
     : ''
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--md-background)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--md-background)', paddingBottom: 80 }}
+      className="md:pb-0">
       {/* Top App Bar */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 30, height: 64,
@@ -507,16 +510,16 @@ export default function ValuationPage() {
                   </button>
                 )}
 
-                {/* Explicit Save button — only show after generation, before saved */}
-                {saved && !savedId && (
+                {/* Save button — shows after generation, hides once saved */}
+                {saved && !savedId && !generating && (
                   <button onClick={saveReport} disabled={saving} className="md-ripple"
                     style={{
                       display: 'flex', alignItems: 'center', gap: 6,
-                      padding: '10px 18px', borderRadius: 20,
-                      background: saving ? 'var(--md-surface-container-high)' : 'rgba(105,240,174,0.15)',
-                      color: '#69F0AE', border: '1px solid rgba(105,240,174,0.3)',
-                      cursor: saving ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 500,
-                      opacity: saving ? 0.6 : 1,
+                      padding: '10px 20px', borderRadius: 20,
+                      background: saving ? 'var(--md-surface-container-high)' : 'rgba(105,240,174,0.18)',
+                      color: '#69F0AE', border: '1px solid rgba(105,240,174,0.35)',
+                      cursor: saving ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 600,
+                      opacity: saving ? 0.7 : 1,
                     }}>
                     {saving
                       ? <><RefreshCw size={13} style={{ animation: 'spin 1s linear infinite' }} /> Saving…</>
@@ -524,13 +527,19 @@ export default function ValuationPage() {
                   </button>
                 )}
 
+                {/* Saved confirmation */}
                 {savedId && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#69F0AE', fontWeight: 500 }}>
-                      <CheckCircle size={14} /> Saved
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#69F0AE', fontWeight: 600 }}>
+                      <CheckCircle size={15} /> Saved
                     </span>
-                    <a href="/reports?tab=valuation" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 20, background: 'var(--md-surface-container-high)', color: 'var(--md-primary)', fontSize: 13, fontWeight: 500, textDecoration: 'none' }}>
-                      <BookOpen size={13} /> View All
+                    <a href={`/valuations/${savedId}`}
+                      style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 20, background: 'var(--md-surface-container-high)', color: 'var(--md-primary)', fontSize: 13, fontWeight: 500, textDecoration: 'none' }}>
+                      <BookOpen size={13} /> View Report
+                    </a>
+                    <a href="/reports?tab=valuation"
+                      style={{ fontSize: 13, color: 'var(--md-outline)', fontWeight: 400, textDecoration: 'none' }}>
+                      All Valuations →
                     </a>
                   </div>
                 )}
@@ -538,14 +547,17 @@ export default function ValuationPage() {
             </div>
 
             {!taData && (
-              <p style={{ fontSize: 12, color: '#FFD740', margin: '0 0 12px' }}>
+              <p style={{ fontSize: 12, color: '#FFD740', margin: '0 0 8px' }}>
                 ⚠ TA data unavailable — report will rely on fundamentals only.
               </p>
             )}
 
+            {/* Inline error — shown right below buttons so save failures are obvious */}
             {genError && (
-              <div style={{ padding: '12px 16px', borderRadius: 12, background: 'rgba(239,83,80,0.1)', color: '#EF5350', fontSize: 13, marginBottom: 12 }}>
-                {genError}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 12, background: 'rgba(239,83,80,0.1)', color: '#EF5350', fontSize: 13, marginBottom: 8 }}>
+                <span style={{ fontSize: 16 }}>⚠</span>
+                <span>{genError}</span>
+                <button onClick={() => setGenError('')} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#EF5350', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}>×</button>
               </div>
             )}
 
@@ -578,6 +590,7 @@ export default function ValuationPage() {
           `}</style>
         </main>
       )}
+      <MobileNav active="valuation" symbol={symbol} />
     </div>
   )
 }

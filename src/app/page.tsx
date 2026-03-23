@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import SearchBar from '@/components/SearchBar'
 import { TrendingUp, BookOpen, Calculator, ScrollText } from 'lucide-react'
+import MobileNav from '@/components/MobileNav'
+import { UserButton } from '@clerk/nextjs'
 
 const POPULAR = [
   { symbol: 'AAPL', name: 'Apple Inc.' },
@@ -37,7 +39,8 @@ export default function HomePage() {
     : POPULAR
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--md-background)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--md-background)', display: 'flex', flexDirection: 'column', paddingBottom: 80 }}
+      className="md:pb-0">
       {/* Top App Bar */}
       <header style={{
         height: 64,
@@ -93,6 +96,7 @@ export default function HomePage() {
             <ScrollText size={16} />
             Logs
           </button>
+          <UserButton />
         </div>
       </header>
 
@@ -165,6 +169,7 @@ export default function HomePage() {
       <footer style={{ padding: '16px 24px', textAlign: 'center', borderTop: '1px solid var(--md-outline-variant)' }}>
         <p style={{ fontSize: 12, color: 'var(--md-outline)' }}>Data from Yahoo Finance · Not financial advice</p>
       </footer>
+      <MobileNav active="home" />
     </div>
   )
 }

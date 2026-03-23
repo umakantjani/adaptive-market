@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { ArrowLeft, Heart, MessageCircle, TrendingUp, TrendingDown, Calculator, BarChart2 } from 'lucide-react'
+import MobileNav from '@/components/MobileNav'
 
 type Tab = 'ta' | 'valuation'
 
@@ -53,7 +54,8 @@ function ReportsPageInner() {
   const loading = tab === 'ta' ? loadingTA : loadingVal
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--md-background)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--md-background)', paddingBottom: 80 }}
+      className="md:pb-0">
       {/* Top App Bar */}
       <header style={{
         position: 'sticky', top: 0, zIndex: 30,
@@ -192,7 +194,7 @@ function ReportsPageInner() {
 
               return (
                 <button key={v.id}
-                  onClick={() => router.push(`/ticker/${v.ticker.symbol}/valuation`)}
+                  onClick={() => router.push(`/valuations/${v.id}`)}
                   className="md-ripple"
                   style={{
                     width: '100%', textAlign: 'left',
@@ -246,6 +248,7 @@ function ReportsPageInner() {
           </>
         )}
       </main>
+      <MobileNav active={tab === 'valuation' ? 'valuation' : 'reports'} />
     </div>
   )
 }

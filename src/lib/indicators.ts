@@ -121,6 +121,7 @@ export function calculateAll(bars: OHLCVBar[]): TAResult {
 
   const sma20Arr = SMA.calculate({ period: 20, values: closes })
   const sma50Arr = SMA.calculate({ period: 50, values: closes })
+  const sma100Arr = SMA.calculate({ period: 100, values: closes })
   const sma200Arr = SMA.calculate({ period: 200, values: closes })
   const ema12Arr = EMA.calculate({ period: 12, values: closes })
   const ema26Arr = EMA.calculate({ period: 26, values: closes })
@@ -139,6 +140,7 @@ export function calculateAll(bars: OHLCVBar[]): TAResult {
 
   const sma20 = sma20Arr.at(-1) ?? null
   const sma50 = sma50Arr.at(-1) ?? null
+  const sma100 = sma100Arr.at(-1) ?? null
   const sma200 = sma200Arr.at(-1) ?? null
   const ema12 = ema12Arr.at(-1) ?? null
   const ema26 = ema26Arr.at(-1) ?? null
@@ -164,7 +166,7 @@ export function calculateAll(bars: OHLCVBar[]): TAResult {
   const volumeSMA20 = currentVolSMA20
   const volumeRatio = currentVolSMA20 && currentVolSMA20 > 0 ? currentVolume / currentVolSMA20 : null
 
-  const taPartial = { sma20, sma50, sma200, ema12, ema26, rsi14, stochK, stochD, adx14, diPlus, diMinus, macdLine, macdSignal, macdHist, bbUpper, bbMiddle, bbLower, bbWidth, atr14, obv, volumeSMA20, volumeRatio }
+  const taPartial = { sma20, sma50, sma100, sma200, ema12, ema26, rsi14, stochK, stochD, adx14, diPlus, diMinus, macdLine, macdSignal, macdHist, bbUpper, bbMiddle, bbLower, bbWidth, atr14, obv, volumeSMA20, volumeRatio }
   const signalScore = computeSignalScore(taPartial, currentPrice)
   const overallSignal = scoreToSignal(signalScore)
   const { support: supportLevels, resistance: resistanceLevels } = calculateSupportResistance(bars)
@@ -179,6 +181,7 @@ export function calculateAll(bars: OHLCVBar[]): TAResult {
   const adxHistory = ADX.calculate({ high: highs, low: lows, close: closes, period: 14 })
   const sma20History = padStart(SMA.calculate({ period: 20, values: closes }), n)
   const sma50History = padStart(SMA.calculate({ period: 50, values: closes }), n)
+  const sma100History = padStart(SMA.calculate({ period: 100, values: closes }), n)
   const sma200History = padStart(SMA.calculate({ period: 200, values: closes }), n)
 
   const slice = (arr: (number | null)[], from: number) => arr.slice(from)
@@ -212,6 +215,7 @@ export function calculateAll(bars: OHLCVBar[]): TAResult {
       obv: OBV.calculate({ close: closes, volume: volumes }).slice(start),
       sma20: slice(sma20History, start),
       sma50: slice(sma50History, start),
+      sma100: slice(sma100History, start),
       sma200: slice(sma200History, start),
     },
   }

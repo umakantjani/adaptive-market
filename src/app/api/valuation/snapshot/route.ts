@@ -24,15 +24,17 @@ export async function POST(req: NextRequest) {
       create: { symbol, name },
     })
 
+    const sf = (v: unknown) => { const n = Number(v); return isFinite(n) ? n : 0 }
+
     await prisma.valuationReport.create({
       data: {
         tickerId: ticker.id,
         inputsJson: JSON.stringify(dcfInputs),
         resultsJson: JSON.stringify(dcfResults),
-        reportText: null,   // snapshot — no AI text yet
-        intrinsicValue: dcfResults.intrinsicValuePerShare,
-        currentPrice: dcfResults.currentPrice,
-        marginOfSafety: dcfResults.marginOfSafety,
+        reportText: null,
+        intrinsicValue: sf(dcfResults.intrinsicValuePerShare),
+        currentPrice:   sf(dcfResults.currentPrice),
+        marginOfSafety: sf(dcfResults.marginOfSafety),
       },
     })
 

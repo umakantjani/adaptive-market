@@ -68,7 +68,7 @@ export default function ValuationsPage() {
           return (
             <button
               key={v.id}
-              onClick={() => router.push(`/ticker/${v.ticker.symbol}/valuation`)}
+              onClick={() => router.push(`/valuations/${v.id}`)}
               className="md-ripple"
               style={{
                 width: '100%', textAlign: 'left',

@@ -28,6 +28,7 @@ export interface SRLevel {
 export interface TAResult {
   sma20: number | null
   sma50: number | null
+  sma100: number | null
   sma200: number | null
   ema12: number | null
   ema26: number | null
@@ -74,6 +75,7 @@ export interface TAResult {
     obv: (number | null)[]
     sma20: (number | null)[]
     sma50: (number | null)[]
+    sma100: (number | null)[]
     sma200: (number | null)[]
   }
 }
