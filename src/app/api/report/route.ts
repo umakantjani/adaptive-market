@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { generateReportStream } from '@/lib/claude'
 import { prisma } from '@/lib/prisma'
+import type { Ticker } from '@prisma/client'
 import type { TAResult, TickerInfo } from '@/types/market'
 
 export const dynamic = 'force-dynamic'
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
 
         // Save report after stream completes (fire and forget)
         prisma.ticker.findUnique({ where: { symbol: ticker.symbol } })
-          .then((dbTicker) => {
+          .then((dbTicker: Ticker | null) => {
             if (dbTicker) {
               return prisma.aIReport.create({
                 data: {
