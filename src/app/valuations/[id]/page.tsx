@@ -5,7 +5,10 @@ import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Heart, TrendingUp, TrendingDown, Calculator, ExternalLink } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import dynamic from 'next/dynamic'
 import type { DCFResults } from '@/types/valuation'
+
+const ExportButtons = dynamic(() => import('@/components/ExportButtons'), { ssr: false })
 
 interface SavedValuation {
   id: number
@@ -186,6 +189,19 @@ export default function ValuationDetailPage() {
             </div>
           )}
         </div>
+
+        {/* Export */}
+        <ExportButtons
+          type="valuation"
+          symbol={valuation.ticker.symbol}
+          companyName={valuation.ticker.name}
+          generatedAt={valuation.generatedAt}
+          intrinsicValue={valuation.intrinsicValue}
+          currentPrice={valuation.currentPrice}
+          marginOfSafety={valuation.marginOfSafety}
+          reportText={valuation.reportText}
+          dcfBridge={dcfResults}
+        />
 
         {/* Actions */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

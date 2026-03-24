@@ -5,6 +5,9 @@ import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Heart, MessageCircle, Trash2, Send } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import dynamic from 'next/dynamic'
+
+const ExportButtons = dynamic(() => import('@/components/ExportButtons'), { ssr: false })
 
 interface Comment { id: number; content: string; createdAt: string }
 interface Report {
@@ -124,6 +127,17 @@ export default function ReportDetailPage() {
               </time>
               <span style={{ fontSize: 12, color: 'var(--md-outline)' }}>{report.modelUsed}</span>
             </div>
+
+            {/* Export */}
+            <ExportButtons
+              type="ta"
+              symbol={report.ticker.symbol}
+              companyName={report.ticker.name}
+              period={report.period}
+              generatedAt={report.generatedAt}
+              reportText={report.reportText}
+              modelUsed={report.modelUsed}
+            />
 
             {/* Report body */}
             <div style={{ background: 'var(--md-surface-container)', borderRadius: 28, padding: 24 }}>
