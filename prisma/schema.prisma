@@ -177,3 +177,62 @@ model ValuationReport {
 
   @@index([tickerId, generatedAt])
 }
+
+// ── Ticker Scanner ─────────────────────────────────────────────────────────
+
+model WatchlistTicker {
+  id        Int      @id @default(autoincrement())
+  symbol    String   @unique
+  name      String   @default("")
+  sector    String?
+  addedAt   DateTime @default(now())
+  active    Boolean  @default(true)
+
+  scanResults ScanResult[]
+
+  @@index([symbol])
+}
+
+model ScanResult {
+  id     Int      @id @default(autoincrement())
+  symbol String
+  name   String   @default("")
+
+  scannedAt      DateTime @default(now())
+  price          Float
+  priceChangePct Float
+
+  // TA signal
+  overallSignal String  // STRONG_BUY | BUY | NEUTRAL | SELL | STRONG_SELL
+  signalScore   Int     // 0–100
+
+  // Sniper grade
+  sniperGrade   String  // FIRE | WATCH | WAIT | AVOID
+  sniperScore   Int     // 0–5 conditions met
+
+  // Key indicators
+  rsi14       Float?
+  macdHist    Float?
+  bbWidth     Float?
+  adx14       Float?
+  volumeRatio Float?
+  atr14       Float?
+
+  // MA context
+  sma20   Float?
+  sma50   Float?
+  sma200  Float?
+
+  // Boolean flags for fast filtering
+  aboveSma20  Boolean @default(false)
+  aboveSma50  Boolean @default(false)
+  aboveSma200 Boolean @default(false)
+  macdBullish Boolean @default(false)
+
+  watchlistTicker WatchlistTicker @relation(fields: [symbol], references: [symbol])
+
+  @@index([symbol, scannedAt])
+  @@index([scannedAt])
+  @@index([overallSignal])
+  @@index([sniperGrade])
+}
